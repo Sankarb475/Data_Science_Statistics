@@ -317,6 +317,6 @@ Name: 0, dtype: object
 1    Puja   24  white   
 
 
-
+ok
 
 
