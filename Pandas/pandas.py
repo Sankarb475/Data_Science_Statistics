@@ -316,7 +316,109 @@ Name: 0, dtype: object
 0  Sankar   23  brown
 1    Puja   24  white   
 
+>>> frame['name'][1]
+'Puja'
 
-ok
+# Assigning Values ::
+>>> frame.name[0] = 'Sambhu'
+__main__:1: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+>>> frame
+     name  Age  color
+0  Sambhu   23  brown
+1    Puja   24  white
+
+
+we can put label on the index and column names as well ::
+>>> frame
+     name  Age  color
+0  Sambhu   23  brown
+1    Puja   24  white
+
+>>> frame.index.name = 'idd'
+
+>>> frame
+       name  Age  color
+idd                    
+0    Sambhu   23  brown
+1      Puja   24  white
+
+>>> frame.columns.name = 'PwC'
+
+>>> frame
+PwC    name  Age  color
+idd                    
+0    Sambhu   23  brown
+1      Puja   24  white
+
+>>> frame.columns.name = 'PwC sucks'
+
+>>> frame
+PwC sucks    name  Age  color
+idd                          
+0          Sambhu   23  brown
+1            Puja   24  white    
+
+
+#One of the best features of the data structures of pandas is their high flexibility. In fact, you can always intervene at any 
+#level to change the internal data structure.
+
+#adding a new column 
+>>> frame['Company'] = ['PwC', 'Infosys']
+>>> frame
+PwC sucks    name  Age  color  Company
+idd                                   
+0          Sambhu   23  brown      PwC
+1            Puja   24  white  Infosys
+
+# adding a new column using a Series
+
+ser = pd.Series['Janai', 'BBSR']
+
+>>> ser = pd.Series(['Janai', 'BBSR'])
+>>> ser
+0    Janai
+1     BBSR
+dtype: object
+
+>>> frame['Address'] = ser
+>>> frame
+PwC sucks    name  Age  color  Company Address
+idd                                           
+0          Sambhu   23  brown      PwC   Janai
+1            Puja   24  white  Infosys    BBSR
+
+# changing a single value
+>>> frame['Address'][0] = 'Kolkata' 
+
+>>> frame
+PwC sucks    name  Age  color  Company  Address
+idd                                            
+0          Sambhu   23  brown      PwC  Kolkata
+1            Puja   24  white  Infosys     BBSR
+
+# Deleting a Column
+>>> del frame['color']
+>>> frame
+PwC sucks    name  Age  Company  Address
+idd                                     
+0          Sambhu   23      PwC  Kolkata
+1            Puja   24  Infosys     BBSR
+
+#putting restriction (The below example will put restriction on all the columns having data type as numeric)
+>>> frame['salary'] = pd.Series([1000,999])
+
+>>> frame
+PwC sucks    name  Age  Company  Address  salary
+idd                                             
+0          Sambhu   23      PwC  Kolkata    1000
+1            Puja   24  Infosys     BBSR     999
+
+>>> frame[frame > 999]
+PwC sucks    name  Age  Company  Address  salary
+idd                                             
+0          Sambhu  NaN      PwC  Kolkata  1000.0
+1            Puja  NaN  Infosys     BBSR     NaN
 
 
