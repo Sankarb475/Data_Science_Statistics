@@ -240,3 +240,83 @@ object contains a key for each column that you want to define, with an array of 
      name  Age  color
 0  Sankar   23  brown
 1    Puja   24  white  
+
+If the dict object from which you want to create a dataframe contains more data than you are interested in, you can make a 
+selection.
+
+>>> frame1 = pd.DataFrame(dick, columns = ['name'])
+>>> frame1
+     name
+0  Sankar
+1    Puja
+
+
+# we can assign our own index as well other than the sequence integer number strating from 0
+>>> frame1 = pd.DataFrame(dick, index = ['first', 'second'])
+>>> frame1
+          name  Age  color
+first   Sankar   23  brown
+second    Puja   24  white
+
+#other ways to define a DataFrame
+>>> frame3 = pd.DataFrame(np.arange(16).reshape((4,4)), index=['red','blue','yellow','white'], columns=['ball','pen','pencil','paper'])
+>>> frame3
+        ball  pen  pencil  paper
+red        0    1       2      3
+blue       4    5       6      7
+yellow     8    9      10     11
+white     12   13      14     15
+
+# Selecting Elements
+>>> frame.columns
+Index(['name', 'Age', 'color'], dtype='object')
+
+>>> frame.index
+RangeIndex(start=0, stop=2, step=1)
+
+>>> frame.values
+array([['Sankar', 23, 'brown'],
+       ['Puja', 24, 'white']], dtype=object)
+
+#selecting a particular a column : return a Series as output
+>>> frame['name']
+0    Sankar
+1      Puja
+Name: name, dtype: object
+
+>>> frame['Age']
+0    23
+1    24
+Name: Age, dtype: int64
+
+#selecting multiple columns
+    
+>>> frame[['name', 'Age']]
+     name  Age
+0  Sankar   23
+1    Puja   24    
+
+#selecting a particular row     
+>>> frame.loc[1]
+name      Puja
+Age         24
+color    white
+Name: 1, dtype: object
+    
+>>> frame.loc[0]
+name     Sankar
+Age          23
+color     brown
+Name: 0, dtype: object    
+
+#selecting multiple rows
+
+>>> frame.loc[[0, 1]]
+     name  Age  color
+0  Sankar   23  brown
+1    Puja   24  white   
+
+
+
+
+
