@@ -468,12 +468,202 @@ integrated in these data structures. Unlike all the other elements in the pandas
 Index objects are immutable. Once declared, they cannot be changed. This ensures their secure sharing between the various data 
 structures.
 
+#Different methods on index :: 
+>>> ser = pd.Series([5,0,3,8,4], index=['red','blue','yellow','white','green'])
+
+>>> ser.idxmin()
+'blue'
+
+>>> ser.idxmax()
+'white'
+
+# if you have multiple values for a particular index label, when you will fetch output based on that label, all the rows will
+# be shown as output, this is true for both Series and DataFrame.
+
+using different index methods you can find out whether your index labels are having duplicates or not :: 
+
+>>> ser2 = pd.Series(range(5))
+>>> ser2
+0    0
+1    1
+2    2
+3    3
+4    4
+dtype: int64
+  
+>>> ser2.index.is_unique
+True
+
+>>> frame3.index.is_unique
+True
+
+# Other Functionalities on Indexes
+1) Reindexing :: we can change the existing indexing and reallign all the data. During reindexing, it is possible to change 
+    the order of the sequence of indexes, delete some of them, or add new ones. In the case of a new label, pandas adds NaN 
+    as the corresponding value.
+    
+>>> ser10 = pd.Series([1,2,3,4,5], index = [0,3,4,6,9])
+
+>>> ser10
+0    1
+3    2
+4    3
+6    4
+9    5
+dtype: int64
+
+>>> ser11 = ser10.reindex([1,2,3,4,5])
+
+>>> ser11
+1    NaN
+2    NaN
+3    2.0
+4    3.0
+5    NaN
+dtype: float64
+
+you can see the NaN values because those indexes were not present before.
+
+you can use methods like 'bfill' and 'ffill' to replace those NaN's.
+
+>>> ser12 = ser10.reindex([1,2,3,4,5], method = 'ffill')
+>>> ser12
+1    1
+2    1
+3    2
+4    3
+5    3
+dtype: int64
+  
+>>> ser13 = ser10.reindex([1,2,3,4,5], method = 'bfill')
+>>> ser13
+1    2
+2    2
+3    2
+4    3
+5    4
+dtype: int64
+# i need to explore more on bfill and ffill 
+>>> ser14 = pd.Series([1,3,5,7,9], index = [1,3,4,6,7])
+>>> 
+>>> ser14.reindex(range(5))
+0    NaN
+1    1.0
+2    NaN
+3    3.0
+4    5.0
+dtype: float64
+>>> 
+>>> ser14.reindex(range(5), method = 'ffill')
+0    NaN
+1    1.0
+2    1.0
+3    3.0
+4    5.0
+dtype: float64
+>>> 
+>>> ser14.reindex(range(5), method = 'bfill')
+0    1
+1    1
+2    3
+3    3
+4    5
+dtype: int64
+  
+we can do these operations on DataFrame as well.
+>>> frame.reindex(range(5), method='ffill',columns=['colors','price','new','object'])
+  
+2) Dropping :: Deleting a row or a column becomes simple, due to the labels used to indicate the indexes and column names.
+    
+>>> ser = pd.Series(np.arange(4.), index=['red','blue','yellow','white'])
+>>> ser
+red       0.0
+blue      1.0
+yellow    2.0
+white     3.0
+dtype: float64
+  
+>>> ser.drop('yellow')
+red      0.0
+blue     1.0
+white    3.0
+dtype: float64
+  
+>>> ser.drop(['blue','white'])
+red       0.0
+yellow    2.0
+dtype: float64  
+  
+DataFrame element can be deleted out as well :: 
+>>> frame = pd.DataFrame(np.arange(16).reshape((4,4)),index=['red','blue','yellow','white'],columns=['ball','pen','pencil','paper'])
+>>> 
+>>> frame
+        ball  pen  pencil  paper
+red        0    1       2      3
+blue       4    5       6      7
+yellow     8    9      10     11
+white     12   13      14     15
+>>> 
+>>> 
+>>> frame.drop(['blue','yellow'])
+       ball  pen  pencil  paper
+red       0    1       2      3
+white    12   13      14     15
+
+#To delete columns, you always need to specify the indexes of the columns, but you must specify the axis from which to delete 
+#the elements, and this can be done using the axis option. So to refer to the column names, you should specify axis = 1.
+
+>>> frame.drop(['pen','pencil'], axis = 1)
+        ball  paper
+red        0      3
+blue       4      7
+yellow     8     11
+white     12     15
 
 
+# 3) Arithmetic and Data Alignment ::
+pandas can align indexes coming from two different data structures. This is especially true when you are performing an 
+arithmetic operation on them.
 
+>>> s1 = pd.Series([3,2,5,1],['white','yellow','green','blue'])
+>>> s2 = pd.Series([1,4,7,2,1],['white','yellow','black','blue','brown'])
 
+>>> s1 + s2
+black    NaN
+blue     3.0
+brown    NaN
+green    NaN
+white    4.0
+yellow   6.0
+dtype: float64
+  
+for Dataframe it considers the indexes and additionally it considers the column names as well.
 
+>>> frame1 = pd.DataFrame(np.arange(16).reshape((4,4)),
+...                   index=['red','blue','yellow','white'],
+...                   columns=['ball','pen','pencil','paper'])
+>>> frame2 = pd.DataFrame(np.arange(12).reshape((4,3)),
+...                   index=['blue','green','white','yellow'],
+...                   columns=['mug','pen','ball'])
+>>> frame1
+        ball  pen  pencil  paper
+red        0    1       2      3
+blue       4    5       6      7
+yellow     8    9      10     11
+white     12   13      14     15
+>>> frame2
+        mug  pen  ball
+blue      0    1     2
+green     3    4     5
+white     6    7     8
+yellow    9   10    11
 
-
+>>> frame1 + frame2
+        ball  mug  paper   pen  pencil
+blue     6.0  NaN    NaN   6.0     NaN
+green    NaN  NaN    NaN   NaN     NaN
+red      NaN  NaN    NaN   NaN     NaN
+white   20.0  NaN    NaN  20.0     NaN
+yellow  19.0  NaN    NaN  19.0     NaN
 
 
