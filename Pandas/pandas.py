@@ -1054,7 +1054,71 @@ red   up    1.592737  2.424065 -0.430500  1.276810
       down -0.082519  1.369261  1.564261  1.688346
   
 # Reordering and Sorting Levels ::
+sometimes you might wanna swap the indexes, what i meant is if you want to swap the white/red with up/down we can do that 
+using swaplevel.
+>>> mframe.columns.names = ['objects','id']
+>>> mframe
+objects          pen               paper          
+id                 1         2         1         2
+white up    0.439708  0.415927 -0.361113  1.447549
+      down  0.270219  0.190040 -0.737986 -0.753375
+red   up    1.592737  2.424065 -0.430500  1.276810
+      down -0.082519  1.369261  1.564261  1.688346
+  
+so now you have assigned names to the column indexes. similarly add name to indexes 
 
+>>> mframe.index.names = ['colors','status']
+
+>>> mframe
+objects             pen               paper          
+id                    1         2         1         2
+colors status                                        
+white  up      0.439708  0.415927 -0.361113  1.447549
+       down    0.270219  0.190040 -0.737986 -0.753375
+red    up      1.592737  2.424065 -0.430500  1.276810
+       down   -0.082519  1.369261  1.564261  1.688346
+  
+Now you can swap :: 
+>>> mframe.swaplevel('status','colors')
+objects             pen               paper          
+id                    1         2         1         2
+status colors                                        
+up     white   0.439708  0.415927 -0.361113  1.447549
+down   white   0.270219  0.190040 -0.737986 -0.753375
+up     red     1.592737  2.424065 -0.430500  1.276810
+down   red    -0.082519  1.369261  1.564261  1.688346
+
+but you can not do the same swap with the column names.
+
+you can sort based on the levels using sort_index :: 
+    
+>>> mframe.sort_index(level='colors')
+objects             pen               paper          
+id                    1         2         1         2
+colors status                                        
+red    down   -0.082519  1.369261  1.564261  1.688346
+       up      1.592737  2.424065 -0.430500  1.276810
+white  down    0.270219  0.190040 -0.737986 -0.753375
+       up      0.439708  0.415927 -0.361113  1.447549
   
   
+# Summary Statistic by Level ::
+>>> mframe.sum(level='colors')
+objects       pen               paper          
+id              1         2         1         2
+colors                                         
+white    0.709928  0.605967 -1.099099  0.694173
+red      1.510217  3.793326  1.133761  2.965155
+
+-- summation of whites and reds 
+
+>>> mframe.sum(level='id', axis=1)
+id                    1         2
+colors status                    
+white  up      0.078595  1.863476
+       down   -0.467766 -0.563335
+red    up      1.162237  3.700875
+       down    1.481741  3.057607
+
+-- summation based on the column names.  
   
