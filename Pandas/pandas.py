@@ -421,4 +421,59 @@ idd
 0          Sambhu  NaN      PwC  Kolkata  1000.0
 1            Puja  NaN  Infosys     BBSR     NaN
 
+# Transposition of a Dataframe : just s
+>>> frame.T
+idd              0        1
+PwC sucks                  
+name        Sambhu     Puja
+Age             23       24
+Company        PwC  Infosys
+Address    Kolkata     BBSR
+salary        1000      999
+
+
+# conditional element search and fetching the elements based on a condition
+
+>>> frame.isin(['PwC', 23, 999])
+PwC sucks   name    Age  Company  Address  salary
+idd                                              
+0          False   True     True    False   False
+1          False  False    False    False    True
+
+>>> frame[frame.isin(['PwC', 23, 999])]
+PwC sucks name   Age Company Address  salary
+idd                                         
+0          NaN  23.0     PwC     NaN     NaN
+1          NaN   NaN     NaN     NaN   999.0
+
+# DataFrame from Nested dict :: This data structure, when it is passed directly as an argument to the DataFrame() constructor, 
+# will be interpreted by pandas to treat external keys as column names and internal keys as labels for the indexes. It might 
+# happen 
+
+
+>>> nestdict = {'red': { 2012: 22, 2013: 33 },'white': { 2011: 13, 2012: 22, 2013: 16},'blue': {2011: 17, 2012: 27, 2013: 18}}
+
+>>> frame4 = pd.DataFrame(nestdict)
+>>> frame4
+       red  white  blue
+2011   NaN     13    17
+2012  22.0     22    27
+2013  33.0     16    18
+
+
+
+# The index object :: 
+the majority of excellent characteristics that the Series and DataFrame has, are due to the presence of an Index object that’s 
+integrated in these data structures. Unlike all the other elements in the pandas data structures (series and dataframe), the 
+Index objects are immutable. Once declared, they cannot be changed. This ensures their secure sharing between the various data 
+structures.
+
+
+
+
+
+
+
+
+
 
