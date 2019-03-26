@@ -667,3 +667,394 @@ white   20.0  NaN    NaN  20.0     NaN
 yellow  19.0  NaN    NaN  19.0     NaN
 
 
+# Operations Between Data Structures
+=============================================================================================================================
+add(), sub(), dic(), mul()
+
+>>> frame.add(frame2)
+        ball  mug  paper   pen  pencil
+blue     6.0  NaN    NaN   6.0     NaN
+green    NaN  NaN    NaN   NaN     NaN
+red      NaN  NaN    NaN   NaN     NaN
+white   20.0  NaN    NaN  20.0     NaN
+yellow  19.0  NaN    NaN  19.0     NaN
+
+>>> frame1.sub(frame2)
+        ball  mug  paper  pen  pencil
+blue     2.0  NaN    NaN  4.0     NaN
+green    NaN  NaN    NaN  NaN     NaN
+red      NaN  NaN    NaN  NaN     NaN
+white    4.0  NaN    NaN  6.0     NaN
+yellow  -3.0  NaN    NaN -1.0     NaN
+
+>>> frame1.div(frame2)
+            ball  mug  paper       pen  pencil
+blue    2.000000  NaN    NaN  5.000000     NaN
+green        NaN  NaN    NaN       NaN     NaN
+red          NaN  NaN    NaN       NaN     NaN
+white   1.500000  NaN    NaN  1.857143     NaN
+yellow  0.727273  NaN    NaN  0.900000     NaN
+
+>>> frame1.mul(frame2)
+        ball  mug  paper   pen  pencil
+blue     8.0  NaN    NaN   5.0     NaN
+green    NaN  NaN    NaN   NaN     NaN
+red      NaN  NaN    NaN   NaN     NaN
+white   96.0  NaN    NaN  91.0     NaN
+yellow  88.0  NaN    NaN  90.0     NaN
+
+# Operations Between DataFrame and Series ::
+>>> frame1 = pd.DataFrame(np.arange(16).reshape(4,4), index=[0,1,2,3], columns = ['D1', 'D2', 'D3', 'D4'])
+
+>>> ser1 = pd.Series([0,1,2,3], index=['D1', 'D2', 'D3', 'D4'])
+>>> out = frame1 - ser1
+>>> out
+   D1  D2  D3  D4
+0   0   0   0   0
+1   4   4   4   4
+2   8   8   8   8
+3  12  12  12  12
+
+If an index is not present in one of the two data structures, the result will be a new column with that index only that all 
+its elements will be NaN.
+
+>>> ser1['D5'] = 12 
+
+>>> frame1.sub(ser1)
+   D1  D2  D3  D4  D5
+0   0   0   0   0 NaN
+1   4   4   4   4 NaN
+2   8   8   8   8 NaN
+3  12  12  12  12 NaN
+
+
+# Pandas Library function
+=============================================================================================================================
+The pandas library is built on the foundations of NumPy and then extends many of its features by adapting them to new data 
+structures as series and dataframe. Among these are the universal functions, called ufunc.
+
+>>> frame1 = pd.DataFrame(np.arange(16).reshape(4,4), index = ['D1', 'D2', 'D3', 'D4'], columns = ['C1', 'C2', 'C3', 'C4'])
+>>> frame1
+    C1  C2  C3  C4
+D1   0   1   2   3
+D2   4   5   6   7
+D3   8   9  10  11
+D4  12  13  14  15
+
+>>> np.sqrt(frame1)
+          C1        C2        C3        C4
+D1  0.000000  1.000000  1.414214  1.732051
+D2  2.000000  2.236068  2.449490  2.645751
+D3  2.828427  3.000000  3.162278  3.316625
+D4  3.464102  3.605551  3.741657  3.872983
+
+# finding the range of each row of a dataframe using lambda function
+>>> f = lambda x : x.max() - x.min()
+
+>>> frame1.apply(f)
+C1    12
+C2    12
+C3    12
+C4    12
+dtype: int64
+
+>>> frame.apply(f, axis=1)
+red       3
+blue      3
+yellow    3
+white     3
+dtype: int64
+
+>>> f1 = lambda x : pd.Series([x.min(), x.max()], index=['min','max'])
+
+>>> frame.apply(f1)
+     ball  pen  pencil  paper
+min     0    1       2      3
+max    12   13      14     15
+
+# Statistics Functions ::
+summing up each column, and the column labels become the index and sum the values
+>>> frame.sum()
+ball      24
+pen       28
+pencil    32
+paper     36
+dtype: int64
+
+There is also a function called describe() that allows you to obtain summary statistics at once ::
+>>> frame.describe()
+            ball        pen     pencil      paper
+count   4.000000   4.000000   4.000000   4.000000
+mean    6.000000   7.000000   8.000000   9.000000
+std     5.163978   5.163978   5.163978   5.163978
+min     0.000000   1.000000   2.000000   3.000000
+25%     3.000000   4.000000   5.000000   6.000000
+50%     6.000000   7.000000   8.000000   9.000000
+75%     9.000000  10.000000  11.000000  12.000000
+max    12.000000  13.000000  14.000000  15.000000    
+
+Correlation :: 
+    
+>>> seq2 = pd.Series([3,4,3,4,5,4,3,2],['2006','2007','2008','2009','2010','2011','2012','2013'])
+
+>>> seq = pd.Series([1,2,3,4,4,3,2,1],['2006','2007','2008','2009','2010','2011','2012','2013'])
+
+>>> seq.corr(seq2)
+0.7745966692414835  
+covariation ::
+>>> seq.cov(seq2)
+0.8571428571428571      
+
+# Sorting and Ranking ::
+pandas provides the sort_ index() function, which returns a new object that’s identical to the start, but in which the 
+elements are ordered.
+
+>>> ser11 = pd.Series([0,3,7,4,1], index = ['C','E', 'A','B','D'])
+
+>>> ser11.sort_index()
+A    7
+B    4
+C    0
+D    1
+E    3
+dtype: int64
+
+>>> ser11.sort_index(ascending=False)
+E    3
+D    1
+C    0
+B    4
+A    7
+dtype: int64
+  
+# For sorting the values :: 
+>>> ser11.sort_values()
+C    0
+D    1
+E    3
+B    4
+A    7
+dtype: int64
+  
+>>> ser11.sort_values(ascending = False)
+A    7
+B    4
+E    3
+D    1
+C    0
+dtype: int64
+
+>>> frame
+        ball  pen  pencil  paper
+red        0    1       2      3
+blue       4    5       6      7
+yellow     8    9      10     11
+white     12   13      14     15  
+
+>>> frame['pen']['yellow'] = 4
+
+>>> frame
+        ball  pen  pencil  paper
+red        0    1       2      3
+blue       4    5       6      7
+yellow     8    4      10     11
+white     12   13      14     15  
+
+>>> frame.sort_values(['pen', 'pencil'], ascending = False)
+        ball  pen  pencil  paper
+white     12   13      14     15
+blue       4    5       6      7
+yellow     8    4      10     11
+red        0    1       2      3
+
+# Ranking :: 
+>>> ser11
+C    0
+E    3
+A    7
+B    4
+D    1
+dtype: int64
+>>> 
+>>> 
+>>> ser11.rank()
+C    1.0
+E    3.0
+A    5.0
+B    4.0
+D    2.0
+dtype: float64
+
+# Playing with Not a Number (NaN)
+=============================================================================================================================
+Assigning a NaN value ::
+>>> ser1 = pd.Series([11,22,33,np.NaN,55])
+
+>>> ser1
+0    11.0
+1    22.0
+2    33.0
+3     NaN
+4    55.0
+dtype: float64
+
+# Filtering Out NaN Values
+Series :: 
+    
+>>> ser1.dropna()
+0    11
+1    22
+2    33
+4    55
+dtype: object    
+
+>>> ser1[ser1.notnull()]
+0    11
+1    22
+2    33
+4    55
+dtype: object
+  
+DataFrame ::
+removing NaN from DataFrame is a bit complex, if you use dropna() then all the rows having even one field as NaN will be 
+deleted out. But if only want to delete the rows or columns in which all elements are NaN then we can use the following ::
+    
+>>> frame1 = pd.DataFrame([[11,22,np.NaN,44],[7,np.NaN,np.NaN,28],[13,26,np.NaN,38]])
+>>> frame1
+    0     1   2   3
+0  11  22.0 NaN  44
+1   7   NaN NaN  28
+2  13  26.0 NaN  38
+
+all the rows have been deleted out because at least one field of each row was having NaN
+>>> frame1.dropna()
+Empty DataFrame
+Columns: [0, 1, 2, 3]
+Index: []
+  
+No row is having all of its field NaN, thus nothing has been removed out.  
+>>> frame1.dropna(how = 'all')
+    0     1   2   3
+0  11  22.0 NaN  44
+1   7   NaN NaN  28
+2  13  26.0 NaN  38
+
+The column '2' was having all of its values NaN, thus it has been removed out.
+>>> frame1.dropna(how = 'all', axis = 1)
+    0     1   3
+0  11  22.0  44
+1   7   NaN  28
+2  13  26.0  38  
+  
+# Filling in NaN Occurrences :: 
+>>> frame1.fillna(0)
+    0     1    2   3
+0  11  22.0  0.0  44
+1   7   0.0  0.0  28
+2  13  26.0  0.0  38
+
+Or we can replace NaN with different values depending on the column, specifying one by one the indexes and the associated 
+values.
+
+>>> frame1.fillna({0:0,1:1,2:2})
+    0     1    2   3
+0  11  22.0  2.0  44
+1   7   1.0  2.0  28
+2  13  26.0  2.0  38
+
+# Hierarchical Indexing and Leveling ::
+ierarchical indexing is a very important feature of pandas, as it allows you to have multiple levels of indexes on a single 
+axis. It gives you a way to work with data in multiple dimensions while continuing to work in a two-dimensional structure.
+Let’s start with a simple example, creating a series containing two arrays of indexes, that is, creating a structure with two 
+levels.
+
+>>> mser = pd.Series(np.random.rand(8),index=[['white','white','white','blue','blue','red','red','red'],
+                                              ['up','down','right','up','down','up','down','left']])
+
+>>> mser
+white  up       0.843899
+       down     0.815922
+       right    0.596557
+blue   up       0.513333
+       down     0.708341
+red    up       0.547607
+       down     0.457542
+       left     0.469705
+dtype: float64
+
+>>> mser.index
+MultiIndex(levels=[['blue', 'red', 'white'], ['down', 'left', 'right', 'up']],
+           labels=[[2, 2, 2, 0, 0, 1, 1, 1], [3, 0, 2, 3, 0, 3, 0, 1]])
+
+>>> mser[:,'down']
+white    0.815922
+blue     0.708341
+red      0.457542
+dtype: float64
+  
+>>> mser['white']
+up       0.843899
+down     0.815922
+right    0.596557
+dtype: float64  
+  
+Intuitively, if you want to select a specific value, you specify both indexes.
+>>> mser['white','up']
+0.8438992128959363
+
+Hierarchical indexing plays a critical role in reshaping data and group-based operations such as a pivot-table.
+
+>>> mser.unstack()
+           down      left     right        up
+blue   0.708341       NaN       NaN  0.513333
+red    0.457542  0.469705       NaN  0.547607
+white  0.815922       NaN  0.596557  0.843899
+
+if you want to perform a reverse operation then unstack.
+
+>>> frame
+        ball  pen  pencil  paper
+red        0    1       2      3
+blue       4    5       6      7
+yellow     8    4      10     11
+white     12   13      14     15
+>>> 
+>>> frame.stack()
+red     ball       0
+        pen        1
+        pencil     2
+        paper      3
+blue    ball       4
+        pen        5
+        pencil     6
+        paper      7
+yellow  ball       8
+        pen        4
+        pencil    10
+        paper     11
+white   ball      12
+        pen       13
+        pencil    14
+        paper     15
+dtype: int64
+
+With dataframe, it is possible to define a hierarchical index both for the rows and for the columns. At the time the dataframe
+is declared, you have to define an array of arrays for the index and columns options.
+
+>>> mframe = pd.DataFrame(np.random.randn(16).reshape(4,4),
+                          index=[['white','white','red','red'], ['up','down','up','down']],
+                          columns=[['pen','pen','paper','paper'],[1,2,1,2]])
+
+>>> mframe
+                 pen               paper          
+                   1         2         1         2
+white up    0.439708  0.415927 -0.361113  1.447549
+      down  0.270219  0.190040 -0.737986 -0.753375
+red   up    1.592737  2.424065 -0.430500  1.276810
+      down -0.082519  1.369261  1.564261  1.688346
+  
+# Reordering and Sorting Levels ::
+
+  
+  
+  
