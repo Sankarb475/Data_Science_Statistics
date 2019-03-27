@@ -168,4 +168,84 @@ white,red,blue,green,animal
 3  2  2  8  3   duck
 4  4  4  2  1  mouse
 
+# Writing Data in CSV 
+>>> frame = pd.DataFrame(np.arange(16).reshape((4,4)),index = ['red', 'blue', 'yellow', 'white'],
+                         columns = ['ball', 'pen', 'pencil', 'paper'])
+
+>>> frame
+        ball  pen  pencil  paper
+red        0    1       2      3
+blue       4    5       6      7
+yellow     8    9      10     11
+white     12   13      14     15
+
+>>> frame.to_csv('output1.csv')
+
+by default the index and column names will also be added to the output file. you can explicitely make sure whether to have it 
+in the output file or not.
+
+>>> frame.to_csv('output1.txt', header = None, index = False)
+
+One point to remember when writing files is that NaN values present in a data structure are shown as empty fields in the file.
+However, you can replace this empty field with a value to your liking using the na_rep option in the to_csv() function. 
+Common values may be NULL, 0, or the same NaN.
+
+>>> frame['paper']['white'] = np.NaN
+>>> frame['pen']['red'] = np.NaN
+
+>>> frame
+        ball   pen  pencil  paper
+red        0   NaN       2    3.0
+blue       4   5.0       6    7.0
+yellow     8   9.0      10   11.0
+white     12  13.0      14    NaN
+
+>>> frame.to_csv('output2.txt', na_rep = 'NULL', header = None, index = None)
+
+# Reading and Writing HTML Files :: conda install html5lib
+==============================================================================================================================
+Writing Data in HTML ::
+>>> frame = pd.DataFrame(np.arange(4).reshape(2,2))
+>>> print(frame.to_html())
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
