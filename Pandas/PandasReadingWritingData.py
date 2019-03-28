@@ -115,10 +115,12 @@ in the above input file the separator is not well defined.
 # In this example, we would be extracting the numeric part from a TXT file, in which there is a sequence of characters with 
 # numerical values and the literal characters are completely fused.
 
+'''
 input :: 
 000END123AAA122
 001END124BBB321
 002END125CCC333
+'''
 
 >>> frame5 = pd.read_table('input4.txt',sep='\D+', header = None, engine='python')
 >>> frame5
@@ -229,23 +231,222 @@ Writing Data in HTML ::
   </tbody>
 </table>
 
+>>> frame = pd.DataFrame(np.arange(16).reshape(4,4), index = ['A','B','C','D'], columns = ['M1','M2','M3','M4'])
+>>> frame
+   M1  M2  M3  M4
+A   0   1   2   3
+B   4   5   6   7
+C   8   9  10  11
+D  12  13  14  15
 
+writing to a html ::
+>>> frame.to_html('output4.html')
 
+Reading Data from an HTML File ::  the read_html() function returns a list of dataframes even if there is only one table.
+      
+>>> a = pd.read_html('output4.html')
+>>> a
+[  Unnamed: 0  M1  M2  M3  M4
+0          A   0   1   2   3
+1          B   4   5   6   7
+2          C   8   9  10  11
+3          D  12  13  14  15]
 
+>>> a[0]
+  Unnamed: 0  M1  M2  M3  M4
+0          A   0   1   2   3
+1          B   4   5   6   7
+2          C   8   9  10  11
+3          D  12  13  14  15
 
+>>> a[0]['M1']
+0     0
+1     4
+2     8
+3    12
+Name: M1, dtype: int64
 
- 
+>>> val = pd.read_html('file:///Users/sankar.biswas/Desktop/AI:ML%20docs/Notebooks/InputFiles/output4.html')
+>>> val
+[  Unnamed: 0  M1  M2  M3  M4
+0          A   0   1   2   3
+1          B   4   5   6   7
+2          C   8   9  10  11
+3          D  12  13  14  15]
 
+# Reading and Writing Data on Microsoft Excel Files
+>>> frameExcel = pd.read_excel('input6.xlsx')
 
+>>> frameExcel
+   yellow  white  blue  purple
+A       1      2     3       4
+B       5      6     7       8
+C       9     10    11      12
 
+by default it will read "sheet 1" only  
 
+>>> frameExcel = pd.read_excel('input6.xlsx', 'Sheet2')
+>>> frameExcel
+   Maroon  pink  red  violet
+a      11    22   33      44
+b      55    66   77      88
+c      99     0  111     222
 
+>>> frameExcel = pd.read_excel('input6.xlsx', 0)
+>>> frameExcel
+   yellow  white  blue  purple
+A       1      2     3       4
+B       5      6     7       8
+C       9     10    11      12
 
+you can either write the sheet name or you can give the index which starts from 0.
 
+# Writing and reading Json Data
+>>> frameExcel
+   yellow  white  blue  purple
+A       1      2     3       4
+B       5      6     7       8
+C       9     10    11      12
 
+>>> frameExcel.to_json('output5.json')
 
+A very good url where you can visualaize and check your json file ::  http://jsonviewer.stack.hu/
+>>> a = pd.read_json('output5.json')
+>>> a
+   yellow  white  blue  purple
+A       1      2     3       4
+B       5      6     7       8
+C       9     10    11      12
 
+json_normalize(), that is able to convert a dict or a list in a table, so then once you have a table we can easily convert it.
 
+>>> from pandas.io.json import json_normalize
+
+# input ::  
+'''
+[{"writer": "Mark Ross",
+ "nationality": "USA",
+ "books": [
+         {"title": "XML Cookbook", "price": 23.56},
+         {"title": "Python Fundamentals", "price": 50.70},
+         {"title": "The NumPy library", "price": 12.30}
+] },
+{"writer": "Barbara Bracket",
+ "nationality": "UK",
+ "books": [
+         {"title": "Java Enterprise", "price": 28.60},
+         {"title": "HTML5", "price": 31.35},
+         {"title": "Python for Dummies", "price": 28.00}
+] }]
+'''
+
+>>> import json
+>>> file = open('input5.json', 'r')
+>>> text = file.read()
+
+>>> text = json.loads(text)
+>>> text
+[{'writer': 'Mark Ross', 'nationality': 'USA', 'books': [{'title': 'XML Cookbook', 'price': 23.56}, {'title': 
+'Python Fundamentals', 'price': 50.7}, {'title': 'The NumPy library', 'price': 12.3}]}, {'writer': 'Barbara Bracket', 
+'nationality': 'UK', 'books': [{'title': 'Java Enterprise', 'price': 28.6}, {'title': 'HTML5', 'price': 31.35}, 
+{'title': 'Python for Dummies', 'price': 28.0}]}]
+
+>>> a = json_normalize(text,'books')
+>>> a
+   price                title
+0  23.56         XML Cookbook
+1  50.70  Python Fundamentals
+2  12.30    The NumPy library
+3  28.60      Java Enterprise
+4  31.35                HTML5
+5  28.00   Python for Dummies
+
+>>> a = json_normalize(text,'books',['nationality','writer'])
+
+>>> a
+   price                title nationality           writer
+0  23.56         XML Cookbook         USA        Mark Ross
+1  50.70  Python Fundamentals         USA        Mark Ross
+2  12.30    The NumPy library         USA        Mark Ross
+3  28.60      Java Enterprise          UK  Barbara Bracket
+4  31.35                HTML5          UK  Barbara Bracket
+5  28.00   Python for Dummies          UK  Barbara Bracket
+
+# The Format HDF5
+=============================================================================================================================
+The HDF term stands for hierarchical data format. When your data analysis involves large amounts of data, it is preferable to 
+use them in binary format. HDF5 library handles binary data. HDF5 supports compression in real time. h5py provides a direct 
+interface with the high-level APIs HDF5, while PyTables makes abstract many of the details of HDF5 to provide more flexible 
+data containers, indexed tables, querying capabilities, and other media on the calculations.
+pandas has a class-like dict called HDFStore, using PyTables to store pandas objects
+
+>>> from pandas.io.pytables import HDFStore
+Now you’re ready to store the data of a dataframe within an.h5 file. First, create a dataframe ::
+>>> frame = pd.DataFrame(np.arange(16).reshape(4,4),index=['white','black','red','blue'],columns=['up','down','right','left'])
+>>> frame
+       up  down  right  left
+white   0     1      2     3
+black   4     5      6     7
+red     8     9     10    11
+blue   12    13     14    15
+
+Now create a file HDF5 calling it mydata.h5, then enter the data inside of the dataframe.
+>>> store = HDFStore('myData.h5')
+>>> store
+<class 'pandas.io.pytables.HDFStore'>
+File path: myData.h5
+
+>>> store['obj1'] = frame
+
+Now you can store multiple data structure like this :: 
+>>> store['obj2'] = frame
+
+>>> store['obj2']
+       up  down  right  left
+white   0     1      2     3
+black   4     5      6     7
+red     8     9     10    11
+blue   12    13     14    15
+
+# Pickle—Python Object Serialization ::
+The pickle module implements a powerful algorithm for serialization and deserialization of a data structure implemented in 
+Python. Pickling is the process in which the hierarchy of an object is converted into a stream of bytes. This allows an object 
+to be transmitted and stored, and then to be rebuilt by the receiver itself retaining all the original features.
+the picking operation is carried out by the pickle module, but currently there is a module called cPickle which is the result 
+of an enormous amount of work optimizing the pickle module (written in C). This module can be in fact in many cases even 
+1,000 times faster than the pickle module.
+
+Serialize a Python Object with cPickle ::
+>>> import pickle
+
+>>> data = { 'color': ['white','red'], 'value': [5, 7]}      
+>>> pickled_data = pickle.dumps(data)
+
+>>> print(pickled_data)
+b'\x80\x03}q\x00(X\x05\x00\x00\x00colorq\x01]q\x02(X\x05\x00\x00\x00whiteq\x03X\x03\x00\x00\x00redq\x04eX\x05\x00\x00\x00valueq\x05]q\
+x06(K\x05K\x07eu.'
+
+So, it has been serialized. Once you have serialized data, they can easily be written on a file or sent over a socket, pipe, 
+etc. After being transmitted, it is possible to reconstruct the serialized object (deserialization) with the loads() function 
+of the cPickle module.
+
+>>> nframe = pickle.loads(pickled_data)
+>>> nframe
+{'color': ['white', 'red'], 'value': [5, 7]}
+
+Pickling and unpickling using Pandas library ::
+      
+>>> frame = pd.DataFrame(np.arange(16).reshape(4,4), index =['up','down','left','right'])
+>>> frame.to_pickle('frame.pkl')
+
+a file named frame.pkl will be created which will have the details of the serialized object.
+
+>>> pd.read_pickle('frame.pkl')
+        0   1   2   3
+up      0   1   2   3
+down    4   5   6   7
+left    8   9  10  11
+right  12  13  14  15
 
 
 
