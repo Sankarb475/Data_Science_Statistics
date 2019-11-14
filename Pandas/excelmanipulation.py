@@ -33,3 +33,26 @@ with pd.ExcelWriter('C:/Users/sbiswas149/Applications/data/PoC data/Australia/ou
 #all_data1.to_excel("C:/Users/sbiswas149/Applications/data/PoC data/Australia/output.xlsx", sheet_name = "Details")
 #all_data2.to_excel("C:/Users/sbiswas149/Applications/data/PoC data/Australia/output.xlsx", sheet_name = "Log File")
 print("done")
+
+
+
+
+
+#Project Use
+
+import glob
+import pandas as pd
+
+all_data = pd.DataFrame()
+print("hello")
+for f in glob.glob("C:/Users/sbiswas149/Applications/data/PoC data/Australia/Final Output/*"):
+    df1 = pd.read_excel(f, header=[0,1], sheet_name = 'Details')
+    all_data = all_data.append(df1, ignore_index=True)
+
+all_data.to_excel("C:/Users/sbiswas149/Applications/data/PoC data/Australia/output.xlsx", header = False, sheet_name = "Details")
+xls = pd.ExcelFile('C:/Users/sbiswas149/Applications/data/PoC data/Australia/output.xlsx')
+
+df = xls.parse('Details', skiprows=1, index_col=None)
+df.to_csv("C:/Users/sbiswas149/Applications/data/PoC data/Australia/output1.csv", header = False)
+
+print(df)
